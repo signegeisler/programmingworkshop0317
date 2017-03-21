@@ -13,6 +13,7 @@ public class Pacman extends Actor
     }
 
     private Dir direction;
+    private int speed = 1;
 
     public Pacman() { 
         getImage().scale(20,20);
@@ -25,34 +26,82 @@ public class Pacman extends Actor
      */
     public void act() 
     {
+        move(speed);
         detectKeyPressed();
     }
 
     private void detectKeyPressed(){
         if(Greenfoot.isKeyDown("up")) {
-            moveUp();
+            moveDir(Dir.NORTH);
         } else if (Greenfoot.isKeyDown("left")) {
-            moveLeft();
+            moveDir(Dir.WEST);
         } else if (Greenfoot.isKeyDown("right")) {
-            moveRight();
+            moveDir(Dir.EAST);
         } else if (Greenfoot.isKeyDown("down")) {
-            moveDown();
+            moveDir(Dir.SOUTH);
         }
     }
 
-    private void moveUp() {
+    private void moveDir(Dir desiredDir) {
+        if(canMove(desiredDir)) {
+            switch (desiredDir) {
+                case NORTH : turnNorth(); break;
+                case WEST :  turnWest();  break;
+                case EAST :  turnEast();  break;
+                case SOUTH : turnSouth(); break;
 
+            }
+        }
     }
 
-    private void moveLeft() {
-
+    private void turnNorth() {
+        if(direction == Dir.WEST) {
+            turn(-90);
+            speed = 1;
+        } else if (direction == Dir.EAST) {
+            turn(-90);
+        } else if (direction == Dir.SOUTH) {
+            speed = 1;
+        }
+        direction = Dir.NORTH;
     }
-
-    private void moveRight() {
-
+    
+        private void turnWest() {
+        if(direction == Dir.NORTH) {
+            turn(90);
+            speed = -1;
+        } else if (direction == Dir.EAST) {
+            speed = -1;
+        } else if (direction == Dir.SOUTH) {
+            turn(90);
+        }
+        direction = Dir.WEST;
     }
-
-    private void moveDown() {
-
+    
+    private void turnEast() {
+        if(direction == Dir.NORTH) {
+            turn(90);
+        } else if (direction == Dir.WEST) {
+            speed = 1;
+        } else if (direction == Dir.SOUTH) {
+            turn(90);
+            speed = 1;
+        }
+        direction = Dir.EAST;
+    }
+    
+        private void turnSouth() {
+        if(direction == Dir.NORTH) {
+            speed = -1;
+        } else if (direction == Dir.WEST) {
+            turn(-90);
+        } else if (direction == Dir.EAST) {
+            turn(-90);
+            speed = -1;
+        }
+        direction = Dir.SOUTH;
+    }
+    private boolean canMove(Dir dir) {
+        return true;
     }
 }
