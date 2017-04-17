@@ -8,100 +8,164 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Pacman extends Actor
 {
-    private enum Dir {
+    /*
+     * Samling af retninger, som figuren kan have. 
+     */
+    private enum Direction {
         NORTH, WEST, EAST, SOUTH
     }
 
-    private Dir direction;
-    private int speed = 1;
+    // Figurens retning
+    private Direction direction;
+    
+    // Figurens hastighed
+    private int speed;
 
+    /*
+     * Constructor for pacman. Bliver kaldt, når der laves en ny Pacman. 
+     * Sætter start-retningen til øst/højre, og start-hastigheden til 1. 
+     */
     public Pacman() { 
-        getImage().scale(20,20);
-        direction = Dir.EAST;
+        direction = Direction.EAST;
+        speed = 1;
+        getImage().scale(30,30);
     }
 
     /**
-     * Act - do whatever the Pacman wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
+     * Her skrives koden som hele tiden udføres. 
      */
-    public void act() 
-    {
-        move(speed);
+    public void act() {
         detectKeyPressed();
-    }
-
-    private void detectKeyPressed(){
-        if(Greenfoot.isKeyDown("up")) {
-            moveDir(Dir.NORTH);
-        } else if (Greenfoot.isKeyDown("left")) {
-            moveDir(Dir.WEST);
-        } else if (Greenfoot.isKeyDown("right")) {
-            moveDir(Dir.EAST);
-        } else if (Greenfoot.isKeyDown("down")) {
-            moveDir(Dir.SOUTH);
+        if(canMove(direction)){
+            move(speed);
+            eat();
         }
     }
 
-    private void moveDir(Dir desiredDir) {
-        if(canMove(desiredDir)) {
-            switch (desiredDir) {
-                case NORTH : turnNorth(); break;
-                case WEST :  turnWest();  break;
-                case EAST :  turnEast();  break;
-                case SOUTH : turnSouth(); break;
-
+    /**
+     * Detekter hvis en af piletasterne bliver trykket på.
+     */
+    private void detectKeyPressed() {
+        if(Greenfoot.isKeyDown("up")) {
+            if(canMove(Direction.NORTH)) {
+                turnNorth();
+            }
+        }
+        
+        if (Greenfoot.isKeyDown("left")) {
+            if(canMove(Direction.WEST)) {
+                turnWest();
+            }
+        }
+        
+        if (Greenfoot.isKeyDown("right")) {
+           if(canMove(Direction.EAST)) {
+                turnEast();
+            }
+        } 
+        
+        if (Greenfoot.isKeyDown("down")) {
+            if(canMove(Direction.SOUTH)) {
+                turnSouth();
             }
         }
     }
 
+    /**
+     * Få pacman til at spise en af prikkerne. 
+     */
+    private void eat(){
+        Dot dot = (Dot) getOneIntersectingObject(Dot.class);
+        if(dot != null) {
+            getWorld().removeObject(dot);
+            ((MyWorld)getWorld()).updateScore();
+        }
+    }
+    
+    
+    //// HERUNDER LIGGER DE "INDBYGGEDE" METODER, SOM I IKKE SKAL ÆNDRE I ////
+    
+     /*
+     * Tjek om det er muligt at flytte sig i en bestemt retning. Hvis ja, resulterer metoden 
+     * i "true", og ellers i "false".
+     */
+    private boolean canMove(Direction dir) {
+        switch(dir) {
+            case NORTH : if(getOneObjectAtOffset(0, -1, Wall.class) == null) return true; break;
+            case WEST  : if(getOneObjectAtOffset(-1, 0, Wall.class) == null) return true; break;
+            case EAST  : if(getOneObjectAtOffset(1, 0,  Wall.class) == null) return true; break;
+            case SOUTH : if(getOneObjectAtOffset(0, 1,  Wall.class) == null) return true; break;
+        }
+        return false;
+    }
+
+    /*
+     * Drej opad. Hastighed, ratation og spejling af billedet håndteres. 
+     */
     private void turnNorth() {
-        if(direction == Dir.WEST) {
+        if(direction == Direction.WEST) {
             turn(-90);
             speed = 1;
-        } else if (direction == Dir.EAST) {
+            getImage().mirrorHorizontally();
+        } else if (direction == Direction.EAST) {
             turn(-90);
-        } else if (direction == Dir.SOUTH) {
+        } else if (direction == Direction.SOUTH) {
             speed = 1;
+            getImage().mirrorHorizontally();
         }
-        direction = Dir.NORTH;
+        direction = Direction.NORTH;
     }
-    
-        private void turnWest() {
-        if(direction == Dir.NORTH) {
+
+     /*
+     * Drej til venstre. Hastighed, ratation og spejling af billedet håndteres. 
+     */
+    private void turnWest() {
+        if(direction == Direction.NORTH) {
             turn(90);
             speed = -1;
-        } else if (direction == Dir.EAST) {
+            getImage().mirrorHorizontally();
+        } else if (direction == Direction.EAST) {
             speed = -1;
-        } else if (direction == Dir.SOUTH) {
+            getImage().mirrorHorizontally();
+        } else if (direction == Direction.SOUTH) {
             turn(90);
         }
-        direction = Dir.WEST;
+        direction = Direction.WEST;
     }
-    
+
+     /*
+     * Drej til højre. Hastighed, ratation og spejling af billedet håndteres. 
+     */
     private void turnEast() {
-        if(direction == Dir.NORTH) {
+        if(direction == Direction.NORTH) {
             turn(90);
-        } else if (direction == Dir.WEST) {
+        } else if (direction == Direction.WEST) {
             speed = 1;
-        } else if (direction == Dir.SOUTH) {
+            getImage().mirrorHorizontally();
+        } else if (direction == Direction.SOUTH) {
             turn(90);
             speed = 1;
+            getImage().mirrorHorizontally();
         }
-        direction = Dir.EAST;
+        direction = Direction.EAST;
     }
-    
-        private void turnSouth() {
-        if(direction == Dir.NORTH) {
+
+     /*
+     * Drej nedad. Hastighed, ratation og spejling af billedet håndteres. 
+     */
+    private void turnSouth() {
+        if(direction == Direction.NORTH) {
             speed = -1;
-        } else if (direction == Dir.WEST) {
+            getImage().mirrorHorizontally();
+        } else if (direction == Direction.WEST) {
             turn(-90);
-        } else if (direction == Dir.EAST) {
+        } else if (direction == Direction.EAST) {
             turn(-90);
             speed = -1;
+            getImage().mirrorHorizontally();
         }
-        direction = Dir.SOUTH;
-    }
-    private boolean canMove(Dir dir) {
-        return true;
+        direction = Direction.SOUTH;
     }
 }
+
+
