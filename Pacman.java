@@ -1,11 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-/**
- * Write a description of class Pacman here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Pacman extends Actor
 {
     /*
@@ -78,7 +72,6 @@ public class Pacman extends Actor
         Dot dot = (Dot) getOneIntersectingObject(Dot.class);
         if(dot != null) {
             getWorld().removeObject(dot);
-            ((MyWorld)getWorld()).updateScore();
         }
     }
     
