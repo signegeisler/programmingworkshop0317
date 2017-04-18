@@ -5,7 +5,7 @@ public class MyWorld extends World
     /* 
      * Dette er en to-dimensionel tabel, der repræsenterer "labyrinten" i 
      * spillet. Tabellen er fyldt med "sandt" og "falsk" for hver celle i 
-     * verden (11*17 celler). De steder hvor tabellen indeholder "sandt" 
+     * verden (17*11 celler). De steder hvor tabellen indeholder "sandt" 
      * svarer til de steder, hvor der er en væg i "labyrinten". 
      */
     boolean[][] labyrinth = 
@@ -28,7 +28,7 @@ public class MyWorld extends World
          {true, true,  true,  true,  true,  true,  true,  true,  true,  true,  true}};   
 
     /*
-     * Constructor for verden. Verden består af 11*17 celler, der hver er 
+     * Constructor for verden. Verden består af 17*11 celler, der hver er 
      * 40*40 px. Denne kode bliver kørt når der oprettes en ny verden (når
      * der trykkes på "reset"-knappen). 
      */
